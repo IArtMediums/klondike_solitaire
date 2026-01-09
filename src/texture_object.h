@@ -1,6 +1,7 @@
 #ifndef TEXTURE_TYPES_H
 #define TEXTURE_TYPES_H
 
+#include <stdbool.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -14,6 +15,7 @@ typedef struct TextureResource {
 	SDL_Texture* image;
 	char* image_path;
 	SDL_Rect* transform;
+	bool queue_free;
 } TextureResource;
 
 typedef struct TextureResourceList {
@@ -37,8 +39,11 @@ void destroy_texture_resource_list(TextureResourceList* obj);
 void destroy_texture_asset_list(TextureResourceList* obj);
 void free_texture_resource(TextureResource* obj);
 void free_texture_asset(TextureResource* obj);
-TextureResource* get_texture_resource(SDL_Renderer* r, LoadedResources type, int x, int y);
+TextureResource* get_texture_resource(LoadedResources type, int x, int y);
 TextureResourceList* new_texture_resource_list(int capacity);
 void add_texture_resource_to_list(TextureResourceList* obj, TextureResource* res);
+void update_buffer(TextureResourceList* obj);
+void remove_from_queue(TextureResourceList* obj, TextureResource* texture);
+
 
 #endif

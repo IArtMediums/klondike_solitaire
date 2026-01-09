@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include "./constants.h"
 #include "./texture_object.h"
+#include "./card_object.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -63,9 +64,8 @@ void render() {
 }
 
 void setup() {
+	srand(time(NULL));
 	init_texture_resources(renderer);
-	TextureResource* player = get_texture_resource(renderer, CARD_FACEUP, WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
-	TextureResource* next_obj = get_texture_resource(renderer, CARD_FACEUP, 0, 0);
 }
 
 void destroy_window() {
@@ -77,6 +77,7 @@ void destroy_window() {
 int main() {
 	game_is_running = initialize_window();
 	setup();
+	Deck* deck = new_deck();
 
 	while (game_is_running) {
 		process_input();
@@ -84,6 +85,7 @@ int main() {
 		render();
 	}
 
+	free_deck(deck);
 	destroy_texture_resources();
 	destroy_window();
 

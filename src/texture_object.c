@@ -1,9 +1,10 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "texture_object.h"
-#include "constants.h"
+#include "./texture_object.h"
+#include "./constants.h"
 
 TextureResourceList* GTextureResources = NULL;
 TextureResourceList* GTextureRenderBuffer = NULL;
@@ -33,11 +34,17 @@ TextureResource* new_texture_resource(
 		return NULL;
 	}
 	texture->transform = malloc(sizeof(SDL_Rect));
-	if (texture->transform == NULL) return NULL;
+	if (texture->transform == NULL) {
+		SDL_DestroyTexture(texture->image);
+		free(texture->image_path);
+		free(texture);
+		return NULL;
+	}
 	texture->transform->x = x;
 	texture->transform->y = y;
 	texture->transform->w = w;
 	texture->transform->h = h;
+	texture->queue_free = false;
 	return texture;
 }
 
@@ -63,7 +70,7 @@ void init_texture_resources(SDL_Renderer* r) {
 
 }
 
-TextureResource* get_texture_resource(SDL_Renderer* r, LoadedResources type, int x, int y) {
+TextureResource* get_texture_resource(LoadedResources type, int x, int y) {
 	TextureResource* new = malloc(sizeof(TextureResource));
 	if (new == NULL) return NULL;
 	TextureResource* src = GTextureResources->list[type];
@@ -75,6 +82,7 @@ TextureResource* get_texture_resource(SDL_Renderer* r, LoadedResources type, int
 	new->transform->y = y;
 	new->transform->w = src->transform->w;
 	new->transform->h = src->transform->h;
+	new->queue_free = false;
 	add_texture_resource_to_list(GTextureRenderBuffer, new);
 	return new;
 }
@@ -114,10 +122,44 @@ void render_texture_buffer(SDL_Renderer* r) {
 	if (!GTextureRenderBuffer) return;
 	if (GTextureRenderBuffer->size == 0) return;
 
+	update_buffer(GTextureRenderBuffer);
+
 	for (int i = 0; i < GTextureRenderBuffer->size; i++) {
 		TextureResource* t = GTextureRenderBuffer->list[i];
 		SDL_RenderCopy(r, t->image, NULL, t->transform);
 	}
+}
+
+void update_buffer(TextureResourceList* obj) {
+	TextureResourceList* to_remove = new_texture_resource_list(8);
+	for (int i = 0; i < obj->size; i++) {
+		if (obj->list[i]->queue_free) {
+			add_texture_resource_to_list(to_remove, obj->list[i]);
+		}
+	}
+	for (int i = 0; i < to_remove->size; i++) {
+		remove_from_queue(obj, to_remove->list[i]);
+		to_remove->list[i] = NULL;
+	}
+	free(to_remove->list);
+	free(to_remove);
+}
+
+void remove_from_queue(TextureResourceList* obj, TextureResource* texture) {
+	int index = -1;
+	for (int i = 0; i < obj->size; i++) {
+		if (obj->list[i] == texture) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) return;
+	free_texture_resource(obj->list[index]);
+	for (int i = index; i < obj->size - 1; i++) {
+		obj->list[i] = obj->list[i + 1];
+	}
+	obj->size--;
+	obj->list[obj->size] = NULL;
 }
 
 void destroy_texture_resources() {
