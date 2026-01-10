@@ -67,7 +67,7 @@ void init_texture_resources(SDL_Renderer* r) {
 	if (GTextureResources == NULL) {
 		return;
 	}
-	GTextureResources->list[CARD_FACEUP] = new_texture_resource(r, "textures/test.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, 64, 64);
+	GTextureResources->list[CARD_FACEUP] = new_texture_resource(r, "textures/test.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
 
 }
 

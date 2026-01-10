@@ -1,20 +1,39 @@
+#ifndef GAME_BOARD_H
+#define GAME_BOARD_H
+
 #include "./card_object.h"
+#include "./collision.h"
+
 #define TABLEAU_COLUMNS 7
 #define MAX_TABLEAU_CAPACITY 52
 #define FOUNDATION_COLUMNS 4
 #define MAX_FOUNDATION_CAPACITY 13
 #define MAX_STOCK_CAPACITY 24
+#define STACK_OFFSET 3
+
+#define STOCK_X 74
+#define WASTE_X 172
+#define FOUNDATION_X 383
+#define FOUNDATION_INCREMENT 34
+#define UPPER_ROW_Y 44
+#define TABLEAU_X 74
+#define TABLEAU_X_INCREMENT 34
+#define TABLEAU_Y 204
+#define TABLEAU_Y_INCREMENT 30
 
 typedef enum StackType {
 	TABLEAU,
 	FOUNDATION,
 	STOCK,
 	WASTE,
-	HAND
+	HAND,
+	CARD,
+	NONE
 } StackType;
 
 typedef struct Stack {
 	StackType type;
+	Collision hitbox;
 	int size;
 	int capacity;
 	Card** data;
@@ -22,11 +41,13 @@ typedef struct Stack {
 
 typedef struct Tableau {
 	int index;
+	Collision hitbox;
 	Stack* data;
 } Tableau;
 
 typedef struct Foundation {
 	Suit suit;
+	Collision hitbox;
 	Stack* data;
 } Foundation;
 
@@ -58,3 +79,6 @@ void destroy_foundation_field(Foundation** obj);
 void destroy_gameboard(GameBoard* obj);
 void deal_cards(Deck* deck);
 TextureResourceList* get_card_render_buffer();
+Collision get_tableau_collision(int column, int row);
+
+#endif

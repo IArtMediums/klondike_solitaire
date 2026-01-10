@@ -5,6 +5,7 @@
 #include "./texture_object.h"
 #include "./card_object.h"
 #include "./game_board.h"
+#include "./collision.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -48,6 +49,14 @@ void process_input() {
 				game_is_running = FALSE;
 			}
 			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				Collision collision = new_collision(event.button.x, event.button.y, 2, 2);
+				CollisionData data = collide_with_board(Board, collision);
+				if (data.object_type == OBJ_CARD) {
+					printf("Selected Card in column: %d, row: %d\n", data.column_index, data.stack_index);
+				}
+			}
 	}
 }
 

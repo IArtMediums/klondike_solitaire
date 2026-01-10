@@ -1,6 +1,8 @@
 #include "./game_board.h"
 #include "./card_object.h"
 #include "./texture_object.h"
+#include "./constants.h"
+#include "./collision.h"
 
 GameBoard* Board = NULL;
 
@@ -59,19 +61,22 @@ void deal_cards(Deck* deck) {
 		for (int j = 0; j < i + 1; j++) {
 			Card* current_card = deck->data[cards_dealt];
 			stack_push(current_stack, current_card);
-			int x = (i * 64) + 100;
-			int y = (j * 32) + 100;
-			current_card->resource->transform->x = x;
-			current_card->resource->transform->y = y;
+			Collision collision = get_tableau_collision(i, j);
+			current_card->resource->transform->x = collision.hitbox.x;
+			current_card->resource->transform->y = collision.hitbox.y;
 			cards_dealt++;
 		}
 	}
 	for (int i = cards_dealt; i < DECK_SIZE; i++) {
 		Card* current_card = deck->data[i];
 		stack_push(Board->stock, current_card);
-		current_card->resource->transform->x = 0;
-		current_card->resource->transform->y = 0;
+		current_card->resource->transform->x = STOCK_X;
+		current_card->resource->transform->y = UPPER_ROW_Y;
 	}
+}
+
+Collision get_tableau_collision(int column, int row) {
+	return new_collision(TABLEAU_X + ((CARD_WIDTH + TABLEAU_X_INCREMENT) * column), TABLEAU_Y + (TABLEAU_Y_INCREMENT * row), CARD_WIDTH, CARD_HEIGHT);
 }
 
 GameBoard* init_gameboard() {
@@ -80,8 +85,11 @@ GameBoard* init_gameboard() {
 	obj->tableau = init_tableau();
 	obj->foundation = init_foundation();
 	obj->stock = new_stack(MAX_STOCK_CAPACITY, STOCK);
+	obj->stock->hitbox = new_collision(STOCK_X, UPPER_ROW_Y, CARD_WIDTH, CARD_HEIGHT);
 	obj->waste = new_stack(MAX_STOCK_CAPACITY, WASTE);
+	obj->waste->hitbox = new_collision(WASTE_X, UPPER_ROW_Y, CARD_WIDTH, CARD_HEIGHT);
 	obj->hand = new_stack(MAX_STOCK_CAPACITY, HAND);
+	obj->hand->hitbox = new_collision(2, 2, 3, 3);
 	return obj;
 }
 
@@ -100,6 +108,7 @@ Foundation** init_foundation() {
 		}
 		obj[i]->suit = i;
 		obj[i]->data = new_stack(MAX_FOUNDATION_CAPACITY, FOUNDATION);
+		obj[i]->hitbox = new_collision(FOUNDATION_X + ((CARD_WIDTH + FOUNDATION_INCREMENT) * i), UPPER_ROW_Y, CARD_WIDTH, CARD_HEIGHT);
 	}
 	return obj;
 }
@@ -140,6 +149,7 @@ Tableau** init_tableau() {
 		}
 		obj[i]->index = i;
 		obj[i]->data = new_stack(MAX_TABLEAU_CAPACITY, TABLEAU);
+		obj[i]->hitbox = new_collision(TABLEAU_X + ((CARD_WIDTH + TABLEAU_X_INCREMENT) * i), TABLEAU_Y, CARD_WIDTH, CARD_HEIGHT);
 	}
 	return obj;
 }
