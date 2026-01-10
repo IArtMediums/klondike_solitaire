@@ -4,6 +4,7 @@
 #include "./constants.h"
 #include "./texture_object.h"
 #include "./card_object.h"
+#include "./game_board.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -55,7 +56,7 @@ void update() {
 }
 
 void render() {
-	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 92, 8, 11, 255);
 	SDL_RenderClear(renderer);
 
 	render_texture_buffer(renderer);
@@ -78,6 +79,7 @@ int main() {
 	game_is_running = initialize_window();
 	setup();
 	Deck* deck = new_deck();
+	deal_cards(deck);
 
 	while (game_is_running) {
 		process_input();
@@ -85,6 +87,7 @@ int main() {
 		render();
 	}
 
+	destroy_gameboard(Board);
 	free_deck(deck);
 	destroy_texture_resources();
 	destroy_window();

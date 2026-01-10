@@ -30,7 +30,7 @@ Deck* new_deck(){
 			c->suit = s;
 			c->black = is_card_black(s);
 			c->faceup = true;
-			c->resource = get_card_texture(s, r, s * 10, r * 10);
+			c->resource = get_card_texture(s, r, s * 100, r * 100);
 			card_count++;
 		}
 	}

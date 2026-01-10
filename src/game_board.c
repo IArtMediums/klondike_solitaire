@@ -1,2 +1,173 @@
 #include "./game_board.h"
 #include "./card_object.h"
+
+GameBoard* Board = NULL;
+
+void deal_cards(Deck* deck) {
+	if (Board != NULL) {
+		destroy_gameboard(Board);
+	}
+	Board = init_gameboard();
+	int cards_dealt = 0;
+	for (int i = 0; i < TABLEAU_COLUMNS; i++) {
+		Tableau* current_column = Board->tableau[i];
+		Stack* current_stack = current_column->data;
+		for (int j = 0; j < i + 1; j++) {
+			Card* current_card = deck->data[cards_dealt];
+			stack_push(current_stack, current_card);
+			int x = (i * 64) + 20;
+			int y = (j * 64) + 100;
+			current_card->resource->transform->x = x;
+			current_card->resource->transform->y = y;
+			cards_dealt++;
+		}
+	}
+	for (int i = cards_dealt; i < DECK_SIZE; i++) {
+		Card* current_card = deck->data[cards_dealt];
+		stack_push(Board->stock, current_card);
+		current_card->resource->transform->x = 0;
+		current_card->resource->transform->y = 0;
+		cards_dealt++;
+	}
+}
+
+GameBoard* init_gameboard() {
+	GameBoard* obj = malloc(sizeof(GameBoard));
+	if (obj == NULL) return NULL;
+	obj->tableau = init_tableau();
+	obj->foundation = init_foundation();
+	obj->stock = new_stack(MAX_STOCK_CAPACITY, STOCK);
+	obj->waste = new_stack(MAX_STOCK_CAPACITY, WASTE);
+	obj->hand = new_stack(MAX_STOCK_CAPACITY, HAND);
+	return obj;
+}
+
+Foundation** init_foundation() {
+	Foundation** obj = malloc(FOUNDATION_COLUMNS * sizeof(Foundation*));
+	if (obj == NULL) return NULL;
+	for (int i = 0; i < FOUNDATION_COLUMNS; i++) {
+		obj[i] = malloc(sizeof(Foundation));
+		if (obj[i] == NULL) {
+			for (int j = 0; j < i; j++) {
+				destroy_stack(obj[j]->data);
+				free(obj[j]);
+			}
+			free(obj);
+			return NULL;
+		}
+		obj[i]->suit = i;
+		obj[i]->data = new_stack(MAX_FOUNDATION_CAPACITY, FOUNDATION);
+	}
+	return obj;
+}
+
+void destroy_gameboard(GameBoard* obj) {
+	destroy_tableau_field(obj->tableau);
+	destroy_foundation_field(obj->foundation);
+	destroy_stack(obj->stock);
+	destroy_stack(obj->waste);
+	destroy_stack(obj->hand);
+	free(obj);
+}
+
+void destroy_foundation_field(Foundation** obj) {
+	for (int i = 0; i < FOUNDATION_COLUMNS; i++) {
+		destroy_foundation(obj[i]);
+	}
+	free(obj);
+}
+
+void destroy_foundation(Foundation* obj) {
+	destroy_stack(obj->data);
+	free(obj);
+}
+
+Tableau** init_tableau() {
+	Tableau** obj = malloc(TABLEAU_COLUMNS * sizeof(Tableau*));
+	if (obj == NULL) return NULL;
+	for (int i = 0; i < TABLEAU_COLUMNS; i++) {
+		obj[i] = malloc(sizeof(Tableau));
+		if (obj[i] == NULL) {
+			for (int j = 0; j < i; j++) {
+				destroy_stack(obj[j]->data);
+				free(obj[j]);
+			}
+			free(obj);
+			return NULL;
+		}
+		obj[i]->index = i;
+		obj[i]->data = new_stack(MAX_TABLEAU_CAPACITY, TABLEAU);
+	}
+	return obj;
+}
+
+void destroy_tableau_field(Tableau** obj) {
+	for (int i = 0; i < TABLEAU_COLUMNS; i++) {
+		destroy_tableau(obj[i]);
+	}
+	free(obj);
+}
+
+void destroy_tableau(Tableau* obj) {
+	destroy_stack(obj->data);
+	free(obj);
+}
+
+Stack* new_stack(int capacity, StackType type) {
+	Stack* obj = malloc(sizeof(Stack));
+	if (obj == NULL) return NULL;
+	obj->capacity = capacity;
+	obj->size = 0;
+	obj->type = type;
+	obj->data = calloc(capacity, sizeof(Card*));
+	if (obj->data == NULL) {
+		free(obj);
+		return NULL;
+	}
+	return obj;
+}
+
+void destroy_stack(Stack* obj) {
+	free(obj->data);
+	free(obj);
+}
+
+void split_append_stack(Stack* src, Stack* dest, int from) {
+	for (int i = from; i < src->size; i++) {
+		Card* current = src->data[i];
+		stack_push(dest, current);
+	}
+	for (int i = src->size -1; i >= from; i--) {
+		stack_pop(src);
+	}
+}
+
+Card* stack_pop(Stack* obj) {
+	if (obj->size == 0) return NULL;
+	Card* item = obj->data[obj->size - 1];
+	obj->data[obj->size - 1] = NULL;
+	obj->size--;
+	return item;
+}
+
+void stack_push(Stack* obj, Card* card) {
+	if (obj->size == obj->capacity) {
+		int old_cap = obj->capacity;
+		extend_stack(obj);
+		if (old_cap == obj->capacity) return;
+	}
+	obj->data[obj->size] = card;
+	obj->size++;
+}
+
+void extend_stack(Stack* obj) {
+	Card** old = obj->data;
+	int new_cap = obj->capacity * 2;
+	Card** extended = realloc(obj->data, new_cap * sizeof(Card*));
+	if (extended == NULL) {
+		obj->data = old;
+		return;
+	}
+	obj->capacity = new_cap;
+	obj->data = extended;
+}
