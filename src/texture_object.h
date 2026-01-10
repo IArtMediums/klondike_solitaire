@@ -44,6 +44,8 @@ TextureResourceList* new_texture_resource_list(int capacity);
 void add_texture_resource_to_list(TextureResourceList* obj, TextureResource* res);
 void update_buffer(TextureResourceList* obj);
 void remove_from_queue(TextureResourceList* obj, TextureResource* texture);
+void render_buffer(SDL_Renderer* r, TextureResourceList* buffer);
+void destroy_texture_buffer(TextureResourceList* buffer);
 
 
 #endif

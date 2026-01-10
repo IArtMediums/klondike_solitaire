@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include "./texture_object.h"
 #include "./constants.h"
+#include "./game_board.h"
 
 TextureResourceList* GTextureResources = NULL;
 TextureResourceList* GTextureRenderBuffer = NULL;
@@ -119,15 +120,28 @@ TextureResourceList* new_texture_resource_list(int capacity) {
 }
 
 void render_texture_buffer(SDL_Renderer* r) {
-	if (!GTextureRenderBuffer) return;
-	if (GTextureRenderBuffer->size == 0) return;
+	// collect render buffers
+	TextureResourceList* card_buffer = get_card_render_buffer();
 
-	update_buffer(GTextureRenderBuffer);
+	// render in order
+	if (card_buffer != NULL) {
+		render_buffer(r, card_buffer);
+	}
+}
 
-	for (int i = 0; i < GTextureRenderBuffer->size; i++) {
-		TextureResource* t = GTextureRenderBuffer->list[i];
+void destroy_texture_buffer(TextureResourceList* buffer) {
+	free(buffer->list);
+	free(buffer);
+}
+
+void render_buffer(SDL_Renderer* r, TextureResourceList* buffer) {
+	if (buffer == NULL) return;
+	if (buffer->size == 0) return;
+	for (int i = 0; i < buffer->size; i++) {
+		TextureResource* t = buffer->list[i];
 		SDL_RenderCopy(r, t->image, NULL, t->transform);
 	}
+	destroy_texture_buffer(buffer);
 }
 
 void update_buffer(TextureResourceList* obj) {

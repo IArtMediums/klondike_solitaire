@@ -1,7 +1,51 @@
 #include "./game_board.h"
 #include "./card_object.h"
+#include "./texture_object.h"
 
 GameBoard* Board = NULL;
+
+
+
+TextureResourceList* get_card_render_buffer() {
+	if (Board == NULL) return NULL;
+	TextureResourceList* buffer = new_texture_resource_list(DECK_SIZE);
+	
+	// Load tableau to buffer
+	for (int i = 0; i < TABLEAU_COLUMNS; i++) {
+		Tableau* current_column = Board->tableau[i];
+		Stack* current_stack = current_column->data;
+		for (int j = 0; j < current_stack->size; j++) {
+			add_texture_resource_to_list(buffer, current_stack->data[j]->resource);
+		}
+	}
+
+	// Load foundation to buffer
+	for (int i = 0; i < FOUNDATION_COLUMNS; i++) {
+		Foundation* current_column = Board->foundation[i];
+		Stack* current_stack = current_column->data;
+		for (int j = 0; j < current_stack->size; j++) {
+			add_texture_resource_to_list(buffer, current_stack->data[j]->resource);
+		}
+	}
+
+	// Load stock to buffer
+	for (int i = 0; i < Board->stock->size; i++) {
+		add_texture_resource_to_list(buffer, Board->stock->data[i]->resource);
+	}
+
+	// Load waste to buffer
+	for (int i = 0; i < Board->waste->size; i++) {
+		add_texture_resource_to_list(buffer, Board->waste->data[i]->resource);
+	}
+
+	// Load hand to buffer
+	for (int i = 0; i < Board->hand->size; i++) {
+		add_texture_resource_to_list(buffer, Board->hand->data[i]->resource);
+	}
+
+	return buffer;
+	
+}
 
 void deal_cards(Deck* deck) {
 	if (Board != NULL) {
@@ -15,19 +59,18 @@ void deal_cards(Deck* deck) {
 		for (int j = 0; j < i + 1; j++) {
 			Card* current_card = deck->data[cards_dealt];
 			stack_push(current_stack, current_card);
-			int x = (i * 64) + 20;
-			int y = (j * 64) + 100;
+			int x = (i * 64) + 100;
+			int y = (j * 32) + 100;
 			current_card->resource->transform->x = x;
 			current_card->resource->transform->y = y;
 			cards_dealt++;
 		}
 	}
 	for (int i = cards_dealt; i < DECK_SIZE; i++) {
-		Card* current_card = deck->data[cards_dealt];
+		Card* current_card = deck->data[i];
 		stack_push(Board->stock, current_card);
 		current_card->resource->transform->x = 0;
 		current_card->resource->transform->y = 0;
-		cards_dealt++;
 	}
 }
 
@@ -140,6 +183,22 @@ void split_append_stack(Stack* src, Stack* dest, int from) {
 	for (int i = src->size -1; i >= from; i--) {
 		stack_pop(src);
 	}
+}
+
+Card* get_card_from_stack_index(Stack* obj, int index) {
+	if (index >= obj->size || index < -1) return NULL;
+	if (index == -1) return obj->data[obj->size - 1];
+	return obj->data[index];
+}
+
+int get_index_from_stack_card(Stack* obj, Card* card) {
+	if (card == NULL) return -1;
+	if (obj->size == 0) return -1;
+	for (int i = 0; i < obj->size; i++) {
+		Card* current_card = obj->data[i];
+		if (current_card == card) return i;
+	}
+	return -1;
 }
 
 Card* stack_pop(Stack* obj) {
