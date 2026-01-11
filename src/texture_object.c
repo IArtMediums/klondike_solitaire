@@ -63,12 +63,64 @@ void free_texture_resource(TextureResource* obj) {
 
 void init_texture_resources(SDL_Renderer* r) {
 	GTextureResources = new_texture_resource_list(TEXTURE_RESOURCE_COUNT);
-	GTextureRenderBuffer = new_texture_resource_list(8);
+	GTextureRenderBuffer = new_texture_resource_list(54);
 	if (GTextureResources == NULL) {
 		return;
 	}
 	GTextureResources->list[CARD_FACEUP] = new_texture_resource(r, "textures/test.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
-
+	GTextureResources->list[AH] = new_texture_resource(r, "textures/ah.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H2] = new_texture_resource(r, "textures/2h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H3] = new_texture_resource(r, "textures/3h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H4] = new_texture_resource(r, "textures/4h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H5] = new_texture_resource(r, "textures/5h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H6] = new_texture_resource(r, "textures/6h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H7] = new_texture_resource(r, "textures/7h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H8] = new_texture_resource(r, "textures/8h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H9] = new_texture_resource(r, "textures/9h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[H10] = new_texture_resource(r, "textures/10h.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[JH] = new_texture_resource(r, "textures/jh.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[QH] = new_texture_resource(r, "textures/qh.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[KH] = new_texture_resource(r, "textures/kh.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[AD] = new_texture_resource(r, "textures/ad.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D2] = new_texture_resource(r, "textures/2d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D3] = new_texture_resource(r, "textures/3d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D4] = new_texture_resource(r, "textures/4d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D5] = new_texture_resource(r, "textures/5d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D6] = new_texture_resource(r, "textures/6d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D7] = new_texture_resource(r, "textures/7d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D8] = new_texture_resource(r, "textures/8d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D9] = new_texture_resource(r, "textures/9d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[D10] = new_texture_resource(r, "textures/10d.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[JD] = new_texture_resource(r, "textures/jd.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[QD] = new_texture_resource(r, "textures/qd.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[KD] = new_texture_resource(r, "textures/kd.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[AS] = new_texture_resource(r, "textures/as.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S2] = new_texture_resource(r, "textures/2s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S3] = new_texture_resource(r, "textures/3s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S4] = new_texture_resource(r, "textures/4s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S5] = new_texture_resource(r, "textures/5s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S6] = new_texture_resource(r, "textures/6s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S7] = new_texture_resource(r, "textures/7s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S8] = new_texture_resource(r, "textures/8s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S9] = new_texture_resource(r, "textures/9s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[S10] = new_texture_resource(r, "textures/10s.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[JS] = new_texture_resource(r, "textures/js.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[QS] = new_texture_resource(r, "textures/qs.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[KS] = new_texture_resource(r, "textures/ks.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[AC] = new_texture_resource(r, "textures/ac.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C2] = new_texture_resource(r, "textures/2c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C3] = new_texture_resource(r, "textures/3c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C4] = new_texture_resource(r, "textures/4c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C5] = new_texture_resource(r, "textures/5c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C6] = new_texture_resource(r, "textures/6c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C7] = new_texture_resource(r, "textures/7c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C8] = new_texture_resource(r, "textures/8c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C9] = new_texture_resource(r, "textures/9c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[C10] = new_texture_resource(r, "textures/10c.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[JC] = new_texture_resource(r, "textures/jc.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[QC] = new_texture_resource(r, "textures/qc.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[KC] = new_texture_resource(r, "textures/kc.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
+	GTextureResources->list[BACK] = new_texture_resource(r, "textures/back.png", WINDOW_WIDTH/2, WINDOW_HEIGHT/2, CARD_WIDTH, CARD_HEIGHT);
 }
 
 TextureResource* get_texture_resource(LoadedResources type, int x, int y) {

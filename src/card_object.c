@@ -43,10 +43,23 @@ bool is_card_black(Suit suit) {
 }
 
 TextureResource* get_card_texture(Suit suit, Rank rank, int x, int y) {
-	// TODO: implement textures for each rank and suit
-	return get_texture_resource(CARD_FACEUP, x, y);
+	int texture_index;
+	
+	// Calculate base index for each suit (13 cards per suit)
+	int suit_offset;
+	switch(suit) {
+		case HEARTS:   suit_offset = AH;  break;  // AH = 1
+		case DIAMONDS: suit_offset = AD;  break;  // AD = 14
+		case SPADES:   suit_offset = AS;  break;  // AS = 27
+		case CLUBS:    suit_offset = AC;  break;  // AC = 40
+		default:       suit_offset = AH;  break;
+	}
+	
+	// Add rank offset (assuming rank enum goes ACE=0, TWO=1, ..., KING=12)
+	texture_index = suit_offset + rank;
+	
+	return get_texture_resource(texture_index, x, y);
 }
-
 void shuffle(Deck* deck) {
 	for (int i = 0; i < DECK_SIZE; i++) {
 		int a = randint(DECK_SIZE - 1);

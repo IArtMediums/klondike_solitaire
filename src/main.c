@@ -6,6 +6,7 @@
 #include "./card_object.h"
 #include "./game_board.h"
 #include "./collision.h"
+#include "./hand.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -38,30 +39,28 @@ int initialize_window(void) {
 
 void process_input() {
 	SDL_Event event;
-	SDL_PollEvent(&event);
-
-	switch (event.type) {
-		case SDL_QUIT:
-			game_is_running = FALSE;
-			break;
-		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_ESCAPE) {
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_QUIT:
 				game_is_running = FALSE;
-			}
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				Collision collision = new_collision(event.button.x, event.button.y, 2, 2);
-				CollisionData data = collide_with_board(Board, collision);
-				if (data.object_type == OBJ_CARD) {
-					printf("Selected Card in column: %d, row: %d\n", data.column_index, data.stack_index);
+				break;
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) {
+					game_is_running = FALSE;
 				}
-			}
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					hand_down(event.button.x, event.button.y);
+				}
+				break;
+		}
 	}
+
 }
 
 void update() {
-
+	hand_update();
 }
 
 void render() {
@@ -75,6 +74,12 @@ void render() {
 
 void setup() {
 	srand(time(NULL));
+	int img_flags = IMG_INIT_PNG;
+	if (!(IMG_Init(img_flags) & img_flags)) {
+		fprintf(stderr, "SDL_image could not initialize! IMG_Error: %s\n", IMG_GetError());
+		game_is_running = FALSE;
+		return;
+	}
 	init_texture_resources(renderer);
 }
 
