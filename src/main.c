@@ -2,11 +2,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "./constants.h"
-#include "./texture_object.h"
-#include "./card_object.h"
-#include "./game_board.h"
-#include "./collision.h"
-#include "./hand.h"
+#include "./renderer.h"
+#include "./card.h"
+#include "./board.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -17,6 +15,7 @@ int initialize_window(void) {
 		fprintf(stderr, "Error initializing SDL.\n");
 		return FALSE;
 	}
+
 	window = SDL_CreateWindow(
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
@@ -26,12 +25,19 @@ int initialize_window(void) {
 		SDL_WINDOW_BORDERLESS
 	);
 	if (window == NULL) {
-		fprintf(stderr, "Error creating SDL Window.\n");
+		fprintf(stderr, "Error creating SDL Window\n");
 		return FALSE;
 	}
+	
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (renderer == NULL) {
-		fprintf(stderr, "Error creating SDL REnderer.\n");
+		fprintf(stderr, "Error creating SDL Renderer\n");
+		return FALSE;
+	}
+
+	int img_flags = IMG_INIT_PNG;
+	if (!(IMG_Init(img_flags) && img_flags)) {
+		fprintf(stderr, "SDL_image could not initialize! IMG_Error: %s\n", IMG_GetError());
 		return FALSE;
 	}
 	return TRUE;
@@ -49,38 +55,29 @@ void process_input() {
 					game_is_running = FALSE;
 				}
 				break;
-			case SDL_MOUSEBUTTONDOWN:
-				if (event.button.button == SDL_BUTTON_LEFT) {
-					hand_down(event.button.x, event.button.y);
-				}
-				break;
 		}
 	}
-
 }
 
 void update() {
-	hand_update();
+	// Uppdate game objects here
 }
 
 void render() {
 	SDL_SetRenderDrawColor(renderer, 92, 8, 11, 255);
 	SDL_RenderClear(renderer);
 
-	render_texture_buffer(renderer);
-
+	RenderItems(renderer);
+	
 	SDL_RenderPresent(renderer);
 }
 
-void setup() {
+int setup() {
 	srand(time(NULL));
-	int img_flags = IMG_INIT_PNG;
-	if (!(IMG_Init(img_flags) & img_flags)) {
-		fprintf(stderr, "SDL_image could not initialize! IMG_Error: %s\n", IMG_GetError());
-		game_is_running = FALSE;
-		return;
-	}
-	init_texture_resources(renderer);
+	if (Init_Textures(renderer) == FALSE) return FALSE;
+	if (Init_Deck() == FALSE) return FALSE;
+	if (Init_Board() == FALSE) return FALSE;
+	return TRUE;
 }
 
 void destroy_window() {
@@ -89,11 +86,15 @@ void destroy_window() {
 	SDL_Quit();
 }
 
+void destroy_game() {
+	Destroy_Board();
+	Destroy_Deck();
+	Destroy_Textures();
+}
+
 int main() {
 	game_is_running = initialize_window();
-	setup();
-	Deck* deck = new_deck();
-	deal_cards(deck);
+	game_is_running = setup();
 
 	while (game_is_running) {
 		process_input();
@@ -101,10 +102,6 @@ int main() {
 		render();
 	}
 
-	destroy_gameboard(Board);
-	free_deck(deck);
-	destroy_texture_resources();
+	destroy_game();
 	destroy_window();
-
-	return 0;
 }
