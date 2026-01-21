@@ -20,3 +20,6 @@
 #define STOCK_X 74
 #define WASTE_X 172
 #define TOP_Y 44
+// Hand collision size
+#define HAND_WIDTH 2
+#define HAND_HEIGHT 2

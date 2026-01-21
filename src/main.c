@@ -5,6 +5,7 @@
 #include "./renderer.h"
 #include "./card.h"
 #include "./board.h"
+#include "./hand.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -55,12 +56,17 @@ void process_input() {
 					game_is_running = FALSE;
 				}
 				break;
+			case SDL_MOUSEBUTTONDOWN:
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					On_MouseButtonDown();
+				}
+				break;
 		}
 	}
 }
 
 void update() {
-	// Uppdate game objects here
+	Update_Hand();
 }
 
 void render() {
@@ -77,6 +83,7 @@ int setup() {
 	if (Init_Textures(renderer) == FALSE) return FALSE;
 	if (Init_Deck() == FALSE) return FALSE;
 	if (Init_Board() == FALSE) return FALSE;
+	if (Init_Hand() == FALSE) return FALSE;
 	return TRUE;
 }
 
@@ -87,6 +94,7 @@ void destroy_window() {
 }
 
 void destroy_game() {
+	Destroy_Hand();
 	Destroy_Board();
 	Destroy_Deck();
 	Destroy_Textures();
