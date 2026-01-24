@@ -23,3 +23,8 @@
 // Hand collision size
 #define HAND_WIDTH 2
 #define HAND_HEIGHT 2
+// WIN data
+#define WIN_WIDTH 660
+#define WIN_HEIGHT 330
+#define WIN_X 74
+#define WIN_Y 169

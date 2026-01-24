@@ -7,6 +7,7 @@
 #include "./board.h"
 #include "./hand.h"
 #include "./commands.h"
+#include "./win.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
@@ -14,6 +15,8 @@ SDL_Renderer* renderer = NULL;
 
 int new_game();
 int start_new_game = FALSE;
+
+int win = FALSE;
 
 int initialize_window(void) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -58,25 +61,34 @@ void process_input() {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
 					game_is_running = FALSE;
+					win = FALSE;
 				}
-				if (event.key.keysym.sym  == SDLK_BACKSPACE) {
+				if (event.key.keysym.sym  == SDLK_BACKSPACE && win == FALSE) {
 					Reverse_Command();
 				}
 				if (event.key.keysym.sym == SDLK_r) {
+					win = FALSE;
 					Restart_CurrentBoard();
 				}
 				if (event.key.keysym.sym == SDLK_n) {
+					win = FALSE;
 					start_new_game = TRUE;
 				}
+				/*
+				if (event.key.keysym.sym == SDLK_w) {
+					Debug_Win();
+				}
+				*/
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				if (event.button.button == SDL_BUTTON_LEFT) {
+				if (event.button.button == SDL_BUTTON_LEFT && win == FALSE) {
 					On_MouseButtonDown();
 				}
 				break;
 			case SDL_MOUSEBUTTONUP:
-				if (event.button.button == SDL_BUTTON_LEFT) {
+				if (event.button.button == SDL_BUTTON_LEFT && win == FALSE) {
 					On_MouseButtonUp();
+					win = Is_GameCompleted();
 				}
 				break;
 		}

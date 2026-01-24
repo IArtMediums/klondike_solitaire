@@ -61,6 +61,8 @@ typedef enum TextureName {
 	JC,
 	QC,
 	KC,
+	WIN,
+	BOARD,
 	TEXTURE_NAME_COUNT
 } TextureName;
 

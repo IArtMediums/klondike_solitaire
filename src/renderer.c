@@ -3,6 +3,7 @@
 #include "./constants.h"
 #include "./renderer.h"
 #include "./vector.h"
+#include "./win.h"
 #include "./board.h"
 
 TextureIndex* LoadedTextures = NULL;
@@ -79,7 +80,13 @@ int Init_Textures(SDL_Renderer* r) {
 	LoadedTextures->data[AC+10] = load_texture(r, AC+10, CARD_WIDTH, CARD_HEIGHT, "textures/jc.png");
 	LoadedTextures->data[AC+11] = load_texture(r, AC+11, CARD_WIDTH, CARD_HEIGHT, "textures/qc.png");
 	LoadedTextures->data[AC+12] = load_texture(r, AC+12, CARD_WIDTH, CARD_HEIGHT, "textures/kc.png");
-	
+
+	// Load Win screen
+	LoadedTextures->data[WIN] = load_texture(r, WIN, WIN_WIDTH, WIN_HEIGHT, "textures/win.png");
+
+	// Load Board Backgroud
+	LoadedTextures->data[BOARD] = load_texture(r, BOARD, WINDOW_WIDTH, WINDOW_HEIGHT, "textures/board.png");
+
 	return TRUE;
 }
 
@@ -88,6 +95,10 @@ Texture* Get_Texture(TextureName name) {
 }
 
 void RenderItems(SDL_Renderer* r) {
+	// Render Backgroud
+	Texture* bg = Get_Texture(BOARD);
+	SDL_Rect bg_transform = {0, 0, bg->size.x, bg->size.y};
+	SDL_RenderCopy(r, bg->image, NULL, &bg_transform);
 	// Add Card buffer getter
 	RenderBuffer cards = Get_BoardRenderBuffer();
 	if (cards.size == 0) {
@@ -104,6 +115,22 @@ void RenderItems(SDL_Renderer* r) {
 		SDL_RenderCopy(r, item.texture->image, NULL, &transform);
 	}
 	free(cards.data);
+	// Add Win buffer getter
+	RenderBuffer win_render = Get_WinRenderBuffer();
+	if (win_render.size == 0) {
+		if (win_render.data != NULL) free(win_render.data);
+		return;
+	}
+	for (int i = 0; i < win_render.size; i++) {
+		RenderItem item = win_render.data[i];
+		SDL_Rect transform;
+		transform.x = item.position.x;
+		transform.y = item.position.y;
+		transform.w = item.texture->size.x;
+		transform.h = item.texture->size.y;
+		SDL_RenderCopy(r, item.texture->image, NULL, &transform);
+	}
+	free(win_render.data);
 }
 
 void Destroy_Textures() {
