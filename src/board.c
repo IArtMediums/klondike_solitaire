@@ -161,6 +161,9 @@ int Init_Board() {
 		Stack* current_column = CurrentBoard->tableau[i];
 		for (int j = 0; j < i + 1; j++) {
 			Stack_PushCard(current_column, CurrentDeck->data[current_card_index]);
+			if (j == i) {
+				CurrentDeck->data[current_card_index]->is_facedown = FALSE;
+			}
 			current_card_index++;
 		}
 	}

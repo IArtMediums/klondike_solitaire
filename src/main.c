@@ -6,10 +6,14 @@
 #include "./card.h"
 #include "./board.h"
 #include "./hand.h"
+#include "./commands.h"
 
 int game_is_running = FALSE;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+
+int new_game();
+int start_new_game = FALSE;
 
 int initialize_window(void) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -55,10 +59,24 @@ void process_input() {
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
 					game_is_running = FALSE;
 				}
+				if (event.key.keysym.sym  == SDLK_BACKSPACE) {
+					Reverse_Command();
+				}
+				if (event.key.keysym.sym == SDLK_r) {
+					Restart_CurrentBoard();
+				}
+				if (event.key.keysym.sym == SDLK_n) {
+					start_new_game = TRUE;
+				}
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				if (event.button.button == SDL_BUTTON_LEFT) {
 					On_MouseButtonDown();
+				}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					On_MouseButtonUp();
 				}
 				break;
 		}
@@ -84,6 +102,7 @@ int setup() {
 	if (Init_Deck() == FALSE) return FALSE;
 	if (Init_Board() == FALSE) return FALSE;
 	if (Init_Hand() == FALSE) return FALSE;
+	if (Init_CommandQueue() == FALSE) return FALSE;
 	return TRUE;
 }
 
@@ -94,10 +113,23 @@ void destroy_window() {
 }
 
 void destroy_game() {
+	Destroy_CommandQueue();
 	Destroy_Hand();
 	Destroy_Board();
 	Destroy_Deck();
 	Destroy_Textures();
+}
+
+int new_game() {
+	Destroy_CommandQueue();
+	Destroy_Hand();
+	Destroy_Board();
+	Destroy_Deck();
+	if (Init_Deck() == FALSE) return FALSE;
+	if (Init_Board() == FALSE) return FALSE;
+	if (Init_Hand() == FALSE) return FALSE;
+	if (Init_CommandQueue() == FALSE) return FALSE;
+	return TRUE;
 }
 
 int main() {
@@ -108,6 +140,10 @@ int main() {
 		process_input();
 		update();
 		render();
+		if (start_new_game == TRUE) {
+			start_new_game = FALSE;
+			new_game();
+		}
 	}
 
 	destroy_game();
